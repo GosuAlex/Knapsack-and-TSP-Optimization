@@ -9,16 +9,48 @@ The number of cities is a graph  having 500. Each city is connected to all remai
 3:  Run you algorithm  with 50 , 100, 250, 500 cities. What are your conclusions.
 */
 
-function random100() {
-  return Math.floor(Math.random() * 100) + 1;
+function randomNumber(max) {
+  return Math.floor(Math.random() * max) + 1;
 }
 
 function sumRangeInArray(arr, start, end) {
   if (start > end) {
     [start, end] = [end, start];
   } 
-  return arr.slice(start+1, end+1).reduce((total, value) => Number(total) + Number(value))
+  return arr.slice(start, end+1).reduce((total, value) => Number(total) + Number(value))
 }
+
+function genAdjSymMatrix(cities, maxPossibleDistance) {
+
+  let arr = [[0]];
+  for (let i = 1; i < cities; i++) {
+    arr[0].push(randomNumber(maxPossibleDistance));
+  }
+
+  for (let i = 1; i < cities; i++) {
+    
+    arr[i] = [];
+    let j = 0;
+    
+    while(i != j) {
+      arr[i].push(arr[j][i]);
+      j++
+    }
+    
+    arr[i].push(0);
+    j++;
+    
+    while(j < cities) {
+      arr[i].push(randomNumber(maxPossibleDistance));
+      j++;
+    }
+    
+  }
+  
+  return arr;
+}
+
+const arr = genAdjSymMatrix(10, 100);
 
 /*
 Random Method (A totally random tour can be generated as follows):
@@ -31,6 +63,34 @@ While ( all cities not visisted ) {
 }
 */
 
+
+
+
+
+
+function random() {
+  let visitedCities = [(Math.floor(Math.random() * arr.length))];
+
+  let newCity = null;
+  let distance = 0;
+
+  while (visitedCities.length <= arr.length - 1) {
+    newCity = Math.floor(Math.random() * arr.length);
+    if (!visitedCities.includes(newCity)) {
+      distance += sumRangeInArray(arr[visitedCities[0]], visitedCities[(visitedCities.length - 1)], newCity);
+      visitedCities.push(newCity);
+    }
+  }
+
+  console.log(visitedCities);
+  console.log(arr);
+  console.log(distance);
+}
+
+console.log(arr);
+
+
+/*
 function random() {
   //const arr = Array(5).fill(0).map(item => Array(1).fill(random100()));
   const arr = Array.from({length: 50}, () => Math.floor(random100()));
@@ -51,6 +111,9 @@ function random() {
   console.log(arr);
   console.log(distance);
 }
+*/
+
+
 
 /*
 Iterative Random Method:
