@@ -164,7 +164,7 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
   let visitedCitiesNew = null;
   let visitedCitiesBest = null;
   let distance = distanceInit;
-  let distanceBest = null;
+  let distanceBest = distanceInit;
   let times = 5;
   let acceptanceProbability = 0.9;
 
@@ -177,7 +177,7 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
       }
     
       let distanceNew = null;
-      let visitedCitiesNew = [...visitedCities];
+      visitedCitiesNew = [...visitedCities];
       visitedCitiesNew[cityOne] = visitedCities[cityTwo];
       visitedCitiesNew[cityTwo] = visitedCities[cityOne];
       console.log("old: " + visitedCities + " new: " + visitedCitiesNew);
@@ -186,7 +186,7 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
         distanceNew += sumRangeInArray(arr[visitedCitiesNew[(visitedCitiesNew.length - i)]], visitedCitiesNew[(visitedCitiesNew.length - i)], visitedCitiesNew[(visitedCitiesNew.length - (i-1))]);
         console.log(distanceNew);
       }
-    
+      
       if (distanceNew <= distance) {
         distance = distanceNew;
         visitedCities = visitedCitiesNew;
@@ -205,15 +205,12 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
     console.log("prob: " + acceptanceProbability)
     console.log(distanceInit);
     console.log(distanceBest);
-    } while (acceptanceProbability > 0.7); 
+    } while (acceptanceProbability > 0.1); 
 
   console.log(visitedCitiesBest);
   console.log(arr);
   console.log(`${distanceBest} is ${distanceInit - distanceBest} points better than the init solution.`);
 }
-
-greedyRandom(visitedCitiesInit, distanceInit);
-
 
 
 
