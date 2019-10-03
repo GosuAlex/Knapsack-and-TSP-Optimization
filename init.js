@@ -186,7 +186,6 @@ function greedy() {
   console.log(distance);
 }
 
-//test
 
 
 
