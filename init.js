@@ -63,11 +63,6 @@ While ( all cities not visisted ) {
 }
 */
 
-
-
-
-
-
 function random() {
   let visitedCities = [(Math.floor(Math.random() * arr.length))];
 
@@ -77,8 +72,9 @@ function random() {
   while (visitedCities.length <= arr.length - 1) {
     newCity = Math.floor(Math.random() * arr.length);
     if (!visitedCities.includes(newCity)) {
-      distance += sumRangeInArray(arr[visitedCities[0]], visitedCities[(visitedCities.length - 1)], newCity);
+      distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
       visitedCities.push(newCity);
+      //console.log("each step distance: " + distance);
     }
   }
 
@@ -86,34 +82,6 @@ function random() {
   console.log(arr);
   console.log(distance);
 }
-
-console.log(arr);
-
-
-/*
-function random() {
-  //const arr = Array(5).fill(0).map(item => Array(1).fill(random100()));
-  const arr = Array.from({length: 50}, () => Math.floor(random100()));
-  let visitedCities = [(Math.floor(Math.random() * arr.length))];
-
-  let newCity = null;
-  let distance = 0;
-
-  while (visitedCities.length <= arr.length - 1) {
-    newCity = Math.floor(Math.random() * arr.length);
-    if (!visitedCities.includes(newCity)) {
-      distance += sumRangeInArray(arr, visitedCities[(visitedCities.length - 1)], newCity);
-      visitedCities.push(newCity);
-    }
-  }
-
-  console.log(visitedCities);
-  console.log(arr);
-  console.log(distance);
-}
-*/
-
-
 
 /*
 Iterative Random Method:
@@ -131,9 +99,7 @@ return  (the best tour  found );
 */
 
 function iterativeRandom() {
-  let times = 5000;
-  const arr = Array.from({length: 50}, () => Math.floor(random100()));
-  //const arr = Array(5).fill(0).map(item => Array(1).fill(random100()));
+  let times = 100;
   let bestDistance = Infinity;
   let bestRoute = null;
   
@@ -146,10 +112,13 @@ function iterativeRandom() {
     while (visitedCities.length <= arr.length - 1) {
       newCity = Math.floor(Math.random() * arr.length);
       if (!visitedCities.includes(newCity)) {
-        distance += sumRangeInArray(arr, visitedCities[(visitedCities.length - 1)], newCity);
+        distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
         visitedCities.push(newCity);
+        //console.log("each step distance: " + distance);
       }
     }
+    
+    //console.log("each route & distance: " + distance + " " + visitedCities);
 
     if (bestDistance > distance) {
       bestDistance = distance;
@@ -176,9 +145,46 @@ while ( all the cities not visited ) {
 }
 */
 
+function greedy() {
+  let visitedCities = [(Math.floor(Math.random() * arr.length))];
+  let distance = 0;
+  
+  let newCity = null;
+  let cityFilter = new Set([]);
+  //let cityFilter = [];
 
+  while (visitedCities.length <= arr.length - 1) {
+    //newCity = arr[visitedCities[(visitedCities.length - 1)]].indexOf(Math.min(...visitedCities[(visitedCities.length - 1)]));
+    console.log("arr " + arr[visitedCities[(visitedCities.length - 1)]]);
+    let possibleCities = [...arr[visitedCities[(visitedCities.length - 1)]]];
+    
+    newCity = possibleCities.indexOf(Math.min(...possibleCities));
+    
+    while (cityFilter.has(newCity) || !Boolean(possibleCities[newCity])) {
+      console.log("while " + newCity);
+      
+      cityFilter.add(newCity);
+      possibleCities[newCity] = Infinity;
+      newCity = possibleCities.indexOf(Math.min(...possibleCities));
+    }
 
+    if (!cityFilter.has(newCity) && Boolean(possibleCities[newCity])) {
+      console.log("if " + newCity);
+      distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
+      visitedCities.push(newCity);
+    } 
+    
+    //console.log(cityFilter);
+    console.log([...cityFilter]);
+    console.log(distance);
 
+    //break;
+  }
+
+  console.log(visitedCities);
+  console.log(arr);
+  console.log(distance);
+}
 
 
 
