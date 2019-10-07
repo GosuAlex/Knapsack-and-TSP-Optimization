@@ -50,6 +50,14 @@ function genAdjSymMatrix(cities, maxPossibleDistance) {
   return arr;
 }
 
+function printer(text) {
+  //var ElementP = document.createElement("p");
+  var ElementP = document.createElement("span");
+  //ElementP.innerText = text;
+  ElementP.innerHTML = text + "<br/>";
+  document.body.appendChild(ElementP);
+}
+
 const arr = genAdjSymMatrix(10, 100);
 
 /*
@@ -119,6 +127,8 @@ function iterativeRandom() {
     }
     
     //console.log("each route & distance: " + distance + " " + visitedCities);
+    let text = visitedCities + " " + distance;
+    printer(text);
 
     if (bestDistance > distance) {
       bestDistance = distance;

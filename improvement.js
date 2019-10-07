@@ -95,7 +95,7 @@ function greedyImprovement(visitedCitiesInit, distanceInit) {
   console.log(`${distance} is ${distanceInit - distance} points better than the init solution.`);
 }
   
-greedyImprovement(visitedCitiesInit, distanceInit);
+//greedyImprovement(visitedCitiesInit, distanceInit);
 
 /*
 Greedy Random Method:
@@ -212,7 +212,7 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
   console.log(`${distanceBest} is ${distanceInit - distanceBest} points better than the init solution.`);
 }
 
-
+greedyRandom(visitedCitiesInit, distanceInit);
 
 
 
