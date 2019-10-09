@@ -20,6 +20,7 @@ function sumRangeInArray(arr, start, end) {
   return arr.slice(start, end+1).reduce((total, value) => Number(total) + Number(value))
 }
 
+// symmetric adjacency matrix 
 function genAdjSymMatrix(cities, maxPossibleDistance) {
 
   let arr = [[0]];
@@ -120,7 +121,8 @@ function iterativeRandom() {
     while (visitedCities.length <= arr.length - 1) {
       newCity = Math.floor(Math.random() * arr.length);
       if (!visitedCities.includes(newCity)) {
-        distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
+        //distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
+        distance += arr[visitedCities[(visitedCities.length - 1)]][newCity];
         visitedCities.push(newCity);
         //console.log("each step distance: " + distance);
       }
