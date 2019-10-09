@@ -216,9 +216,12 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
       console.log("old: " + visitedCities + " new: " + visitedCitiesNew);
     
       for (let i = visitedCitiesNew.length; i >= 2; i--) {
-        distanceNew += sumRangeInArray(arr[visitedCitiesNew[(visitedCitiesNew.length - i)]], visitedCitiesNew[(visitedCitiesNew.length - i)], visitedCitiesNew[(visitedCitiesNew.length - (i-1))]);
+        //distanceNew += sumRangeInArray(arr[visitedCitiesNew[(visitedCitiesNew.length - i)]], visitedCitiesNew[(visitedCitiesNew.length - i)], visitedCitiesNew[(visitedCitiesNew.length - (i-1))]);
+        distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - i)]][visitedCitiesNew[(visitedCitiesNew.length - (i-1))]];
         console.log(distanceNew);
       }
+      //if you want to go back to startpoint at the end.
+      //distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - 1)]][visitedCitiesNew[0]];
       
       if (distanceNew <= distance) {
         distance = distanceNew;
