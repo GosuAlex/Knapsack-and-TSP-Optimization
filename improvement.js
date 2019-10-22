@@ -59,7 +59,8 @@ function greedyImprovement(visitedCitiesInit, distanceInit) {
   let visitedCities = [...visitedCitiesInit];
   let visitedCitiesNew = null;
   let distance = distanceInit;
-  let times = 10;
+  let distanceNew = null;
+  let times = 2100;
   
   while (times > 0) {
     let cityOne = [(Math.floor(Math.random() * arr.length))];
@@ -68,31 +69,38 @@ function greedyImprovement(visitedCitiesInit, distanceInit) {
       cityTwo = [(Math.floor(Math.random() * arr.length))];
     }
     
-    let distanceNew = null;
+    distanceNew = null;
     visitedCitiesNew = [...visitedCities];
+    visitedCitiesNew.pop();
     visitedCitiesNew[cityOne] = visitedCities[cityTwo];
     visitedCitiesNew[cityTwo] = visitedCities[cityOne];
-    console.log("old: " + visitedCities + " new: " + visitedCitiesNew);
+    //console.log("old: " + visitedCities + " new: " + visitedCitiesNew);
     
     for (let i = visitedCitiesNew.length; i >= 2; i--) {
-      distanceNew += sumRangeInArray(arr[visitedCitiesNew[(visitedCitiesNew.length - i)]], visitedCitiesNew[(visitedCitiesNew.length - i)], visitedCitiesNew[(visitedCitiesNew.length - (i-1))]);
-      console.log(distanceNew);
+      distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - i)]][visitedCitiesNew[(visitedCitiesNew.length - (i-1))]];
+      //console.log(distanceNew);
     }
+    distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - 1)]][visitedCitiesNew[0]];
+    visitedCitiesNew.push(visitedCitiesNew[0]);
     
     if (distanceNew <= distance) {
       distance = distanceNew;
       visitedCities = visitedCitiesNew;
     }
     
-    console.log(distanceNew);
+    //console.log(distanceNew);
     console.log(distance);
   
     times--;
   }
+  
+  routeUlti = visitedCities;
+  distanceUlti = distance;
+  distanceUltiInit = distanceInit;
 
   console.log(visitedCities);
-  console.log(arr);
-  console.log(`${distance} is ${distanceInit - distance} points better than the init solution.`);
+  //console.log(arr);
+  console.log(`${distance} is ${distanceInit - distance} points better than the init solution. ${distanceInit}`);
 }
   
 //greedyImprovement(visitedCitiesInit, distanceInit);
@@ -198,19 +206,22 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
   let visitedCitiesBest = null;
   let distance = distanceInit;
   let distanceBest = distanceInit;
-  let times = 5;
+  let times = 100;
   let acceptanceProbability = 0.9;
 
   do {
     for (let i = times; i > 0; i--) {
+
+      let distanceNew = null;
+      visitedCitiesNew = [...visitedCities];
+      visitedCitiesNew.pop();
+
       let cityOne = [(Math.floor(Math.random() * arr.length))];
       let cityTwo = [(Math.floor(Math.random() * arr.length))];
       while (cityOne == cityTwo) {
         cityTwo = [(Math.floor(Math.random() * arr.length))];
       }
     
-      let distanceNew = null;
-      visitedCitiesNew = [...visitedCities];
       visitedCitiesNew[cityOne] = visitedCities[cityTwo];
       visitedCitiesNew[cityTwo] = visitedCities[cityOne];
       console.log("old: " + visitedCities + " new: " + visitedCitiesNew);
@@ -220,8 +231,9 @@ function greedyRandom(visitedCitiesInit, distanceInit) {
         distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - i)]][visitedCitiesNew[(visitedCitiesNew.length - (i-1))]];
         console.log(distanceNew);
       }
-      //if you want to go back to startpoint at the end.
-      //distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - 1)]][visitedCitiesNew[0]];
+      // Go back to startpoint at the end.
+      distanceNew += arr[visitedCitiesNew[(visitedCitiesNew.length - 1)]][visitedCitiesNew[0]];
+      visitedCitiesNew.push(visitedCitiesNew[0]);
       
       if (distanceNew <= distance) {
         distance = distanceNew;

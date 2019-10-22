@@ -81,11 +81,14 @@ function random() {
   while (visitedCities.length <= arr.length - 1) {
     newCity = Math.floor(Math.random() * arr.length);
     if (!visitedCities.includes(newCity)) {
-      distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
+      distance += arr[visitedCities[(visitedCities.length - 1)]][newCity];
       visitedCities.push(newCity);
       //console.log("each step distance: " + distance);
     }
   }
+  // Go back to startpoint at the end.
+  distance += arr[visitedCities[(visitedCities.length - 1)]][visitedCities[0]];
+  visitedCities.push(visitedCities[0]);
 
   console.log(visitedCities);
   console.log(arr);
@@ -127,6 +130,10 @@ function iterativeRandom() {
         //console.log("each step distance: " + distance);
       }
     }
+
+    // Go back to startpoint at the end.
+    distance += arr[visitedCities[(visitedCities.length - 1)]][visitedCities[0]];
+    visitedCities.push(visitedCities[0]);
     
     //console.log("each route & distance: " + distance + " " + visitedCities);
     let text = visitedCities + " " + distance;
@@ -167,13 +174,13 @@ function greedy() {
 
   while (visitedCities.length <= arr.length - 1) {
     //newCity = arr[visitedCities[(visitedCities.length - 1)]].indexOf(Math.min(...visitedCities[(visitedCities.length - 1)]));
-    console.log("arr " + arr[visitedCities[(visitedCities.length - 1)]]);
+    //console.log("arr " + arr[visitedCities[(visitedCities.length - 1)]]);
     let possibleCities = [...arr[visitedCities[(visitedCities.length - 1)]]];
     
     newCity = possibleCities.indexOf(Math.min(...possibleCities));
     
     while (cityFilter.has(newCity) || !Boolean(possibleCities[newCity])) {
-      console.log("while " + newCity);
+      //console.log("while " + newCity);
       
       cityFilter.add(newCity);
       possibleCities[newCity] = Infinity;
@@ -181,21 +188,28 @@ function greedy() {
     }
 
     if (!cityFilter.has(newCity) && Boolean(possibleCities[newCity])) {
-      console.log("if " + newCity);
-      distance += sumRangeInArray(arr[visitedCities[(visitedCities.length - 1)]], visitedCities[(visitedCities.length - 1)], newCity);
+      //console.log("if " + newCity);
+      distance += arr[visitedCities[(visitedCities.length - 1)]][newCity];
       visitedCities.push(newCity);
     } 
     
     //console.log(cityFilter);
-    console.log([...cityFilter]);
-    console.log(distance);
+    //console.log([...cityFilter]);
+    //console.log(distance);
 
     //break;
   }
+  
+  distance += arr[visitedCities[(visitedCities.length - 1)]][visitedCities[0]];
+  visitedCities.push(visitedCities[0]);
 
+  //console.log(arr);
   console.log(visitedCities);
-  console.log(arr);
   console.log(distance);
+  
+  console.log("init end");
+  
+  //greedyRandom(visitedCities, distance);
 }
 
 

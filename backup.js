@@ -35,4 +35,8 @@ for (int j = 0; j < N; j++)
 
 */
 
+let routeUlti = [];
+let distanceUlti = Infinity;
+let distanceUltiInit = 0;
+
 
