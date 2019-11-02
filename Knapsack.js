@@ -26,6 +26,7 @@ function createRandomKnapsack(maxWeight, objects) {
   
   while(knapsackWeight < maxWeight && objects.weight.some(item => item <= (maxWeight - knapsackWeight))) {
     
+    //this might be cheating
     let validWeightPicks = objects.weight.reduce((acc,cur,idx) => {
       if(cur <= (maxWeight - knapsackWeight) && !arr.includes(idx)) {
         acc.push(idx);
@@ -47,6 +48,20 @@ function createRandomKnapsack(maxWeight, objects) {
     knapsackWeight += objects.weight[validWeightPicks[randomPick]];
     console.log(knapsackWeight);
   }
+  /* truly random, no cheating
+  let i = 0;
+  
+  while (knapsackWeight < maxWeight && i => maxWeight) {
+    randomPick = randomNumber(objects.weight.length - 2);
+    
+    if (!arr.includes(randomPick) && objects.weight[randomPick] + knapsackWeight =< maxWeight) {
+      arr.push(objects.weight[randomPick]);
+      knapsackWeight += objects.weight[randomPick];
+    }
+    
+    i++;
+  }
+  */
   
   return arr;
 } 
@@ -59,10 +74,31 @@ function checkFitness(knapsack, objects) {
   return fitness;
 }
 
-function geneticRangeCrossover(knapsacks, objects) {
-  let reproductionArray = [];
-  //let knapsacksBest = LENGTH ORIGINAL;
+function checkWeight(knapsack, objects) {
+  let weight = 0;
   
+  knapsack.forEach(item => weight += objects.weight[item]);
+
+  return weight;
+}
+
+function enforceWeightLimit(knapsack, maxWeight, objects) {
+  let weight = 0;
+  
+  knapsack.forEach(item => weight += objects.weight[item]);
+  
+  while(weight > maxWeight) {
+    let randomRemove = randomNumber(knapsack.length - 2);
+    weight -= objects.weight[knapsack[randomRemove]];
+    knapsack.splice(randomRemove, 1);
+  }
+}
+
+function geneticRangeCrossover(knapsacks, maxWeight, objects) {
+  let reproductionArray = [];
+  //let knapsacksBest = LENGTH ORIGINAL; Array.from(reproductionArray[arr][0], x => x)
+  
+  //Pair parents sacks
   for(let sack in knapsacks) {
     randomSack = randomNumber(knapsacks.length - 1);
     reproductionArray.push([knapsacks[0], knapsacks[randomSack]]);
@@ -91,29 +127,47 @@ function geneticRangeCrossover(knapsacks, objects) {
     reproductionArray[arr][2].splice(rangeStartIndex, crossFrom1.length, ...crossFrom1);
     reproductionArray[arr][3].splice(rangeStartIndex, crossFrom1.length, ...crossFrom0);
     
+    console.log(reproductionArray[arr][2]);
+    console.log(reproductionArray[arr][3]);
     
-    //duplicates!!!
+    let set2 = new Set(reproductionArray[arr][2]);
+    reproductionArray[arr][2] = [...set2];
+    let set3 = new Set(reproductionArray[arr][3]);
+    reproductionArray[arr][3] = [...set3];
+
+    console.log(reproductionArray[arr][2]);
+    console.log(reproductionArray[arr][3]);
+    
+    //check wheight limit
+    let weight = [];
+    reproductionArray[arr].forEach(sack => weight.push(checkWeight(sack, objects)));
+    
+    //remove excessive weight
+    reproductionArray[arr].forEach(sack => enforceWeightLimit(sack, maxWeight, objects));
+    
+    //check fitness
+    let fitness = [];
+    reproductionArray[arr].forEach(sack => fitness.push(checkFitness(sack, objects)));
+    console.log("fit " + fitness);    
+    
+    //put 50% of the best ones in return arr
     
     console.log(reproductionArray[arr]);
   }
   
   console.log(reproductionArray);
   
-  //pick random range
-  //reproduction loop tru 2d array, slice & splice, push children in same array as parents
-  
   //chance: random mutation
-  
   //put best knapsacks into same length array as original
   //fill array with all 0's so that any fitness is better
   //check fitness and if better, find index math.min value and put better fitness there
   
   //stop loop
   
-  return knapsacks; 
+  return reproductionArray; 
 }
 
-let myObjects = createRandomObjects(10, 99, 10);
+let myObjects = createRandomObjects(20, 99, 10);
 let knapsack1 = createRandomKnapsack(35, myObjects);
 let knapsack2 = createRandomKnapsack(35, myObjects);
 let knapsack3 = createRandomKnapsack(35, myObjects);
@@ -124,12 +178,18 @@ console.log(myObjects);
 let before = [knapsack1, knapsack2, knapsack3, knapsack4];
 console.log(before);
 
-let after = geneticRangeCrossover([knapsack1, knapsack2, knapsack3, knapsack4], myObjects);
+let after = geneticRangeCrossover([knapsack1, knapsack2, knapsack3, knapsack4], 35, myObjects);
 console.log(after)
+
+console.log(checkFitness(after[0][0], myObjects));
+console.log(checkFitness(after[0][1], myObjects));
+console.log(checkFitness(after[0][2], myObjects));
+console.log(checkFitness(after[0][3], myObjects));
+
 
 /*
 function genetic (point crossover)
-
+check randomNumber -2 stuff is working
 */
 
 
