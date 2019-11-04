@@ -100,7 +100,9 @@ function mutateRandom(knapsack, objects) {
 
 function geneticRangeCrossover(knapsacks, maxWeight, objects) {
   let reproductionArray = [];
-  //let knapsacksBest = LENGTH ORIGINAL; Array.from(reproductionArray[arr][0], x => x)
+  let survivalArray = [];
+  survivalArray[0] = Array.from({length: knapsacks.length}, (v, i) => 0);
+  survivalArray[1] = Array.from({length: knapsacks.length}, (v, i) => knapsacks[i]);
   
   //Pair parents sacks
   for(let sack in knapsacks) {
@@ -110,6 +112,8 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     knapsacks.shift();
   }
   
+  let loop = 100;
+  while (loop > 0) {
   //loop
   
   let rangeStartIndex = randomNumber(reproductionArray[0][0].length -1);
@@ -150,56 +154,72 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     });
     
     //check wheight limit
+    /*
     let weight = [];
     reproductionArray[arr].forEach(sack => weight.push(checkWeight(sack, objects)));
+    */
     
     //remove excessive weight
     reproductionArray[arr].forEach(sack => enforceWeightLimit(sack, maxWeight, objects));
     
-    reproductionArray[arr].forEach(sack => weight.push(checkWeight(sack, objects)));
+    //reproductionArray[arr].forEach(sack => weight.push(checkWeight(sack, objects)));
     //console.log("wgt "+ weight);
     
     //check fitness
+    /*
     let fitness = [];
     reproductionArray[arr].forEach(sack => fitness.push(checkFitness(sack, objects)));
     console.log("fit " + fitness);    
+    */
     
-    //put 50% of the best ones in return arr
+    //put best knapsacks into same length array as original
+    reproductionArray[arr].forEach(sack => {
+      let sackFitness = checkFitness(sack, objects);
+      let leastFitIndex = survivalArray[0].findIndex(item => item == Math.min(...survivalArray[0]));
+      if (survivalArray[0][leastFitIndex] < sackFitness) {
+        survivalArray[0][leastFitIndex] = sackFitness;
+        survivalArray[1][leastFitIndex] = [...sack];
+      }
+    });
     
-    console.log(reproductionArray[arr]);
+    //console.log(reproductionArray[arr]);
+    console.log(survivalArray[0]);
   }
   
-  //console.log(reproductionArray);
-  
-  
-  //put best knapsacks into same length array as original
-  //fill array with all 0's so that any fitness is better
-  //check fitness and if better, find index math.min value and put better fitness there
+  loop--;
+  }
   
   //stop loop
   
-  return reproductionArray; 
+  return survivalArray; 
 }
 
-let myObjects = createRandomObjects(20, 99, 10);
-let knapsack1 = createRandomKnapsack(35, myObjects);
-let knapsack2 = createRandomKnapsack(35, myObjects);
-let knapsack3 = createRandomKnapsack(35, myObjects);
-let knapsack4 = createRandomKnapsack(35, myObjects);
+let myObjects = createRandomObjects(100, 99, 10);
+//let knapsack1 = createRandomKnapsack(35, myObjects);
+let knapsacks = [];
+for (let i = 50; i > 0; i--) {
+  knapsacks.push(createRandomKnapsack(35, myObjects));
+}
 
 console.log(myObjects);
 
-let before = [knapsack1, knapsack2, knapsack3, knapsack4];
+let before = knapsacks;
 console.log(before);
 
-let after = geneticRangeCrossover([knapsack1, knapsack2, knapsack3, knapsack4], 35, myObjects);
-console.log(after)
+let after = geneticRangeCrossover(knapsacks, 35, myObjects);
+console.log(after);
 
+//let again = geneticRangeCrossover(after[1], 35, myObjects);
+//console.log(again);
 
 
 /*
 function genetic (point crossover)
 check randomNumber -2 stuff is working
+send number of loop to function, send fitness with the knapsack so it would never get worse.
+if fitness if equal on more sacks, randomize it quite a bit for kick esque effect.
+random range pick isn't good. it picks from [0][0]. It should pick from the longeste maybe? dunno
+probably the random objects has a lot to do with start fitness and end results not changing much
 */
 
 
