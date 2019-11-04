@@ -38,15 +38,15 @@ function createRandomKnapsack(maxWeight, objects) {
       break;
     }
     
-    console.log("valid: " + validWeightPicks);
+    //console.log("valid: " + validWeightPicks);
     
     randomPick = randomNumber(validWeightPicks.length - 2);
     
-    console.log("pick: " + randomPick);
+    //console.log("pick: " + randomPick);
     arr.push(validWeightPicks[randomPick]);
-    console.log(arr);
+    //console.log(arr);
     knapsackWeight += objects.weight[validWeightPicks[randomPick]];
-    console.log(knapsackWeight);
+    //console.log(knapsackWeight);
   }
   /* truly random, no cheating
   let i = 0;
@@ -83,15 +83,19 @@ function checkWeight(knapsack, objects) {
 }
 
 function enforceWeightLimit(knapsack, maxWeight, objects) {
-  let weight = 0;
+  let weight = checkWeight(knapsack, objects);
   
-  knapsack.forEach(item => weight += objects.weight[item]);
+  //knapsack.forEach(item => weight += objects.weight[item]);
   
   while(weight > maxWeight) {
     let randomRemove = randomNumber(knapsack.length - 2);
     weight -= objects.weight[knapsack[randomRemove]];
     knapsack.splice(randomRemove, 1);
   }
+}
+
+function mutateRandom(knapsack, objects) {
+  knapsack[randomNumber(knapsack.length - 2)] = objects.weight[randomNumber(objects.weight.length - 2)];
 }
 
 function geneticRangeCrossover(knapsacks, maxWeight, objects) {
@@ -114,11 +118,11 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     [rangeStartIndex, rangeEndIndex] = [rangeEndIndex, rangeStartIndex];
   }
   
-  console.log(rangeStartIndex);
-  console.log(rangeEndIndex);
+  //console.log(rangeStartIndex);
+  //console.log(rangeEndIndex);
   
   for(let arr in reproductionArray) {
-    console.log(reproductionArray[arr]);
+    //console.log(reproductionArray[arr]);
     
     reproductionArray[arr][2] = Array.from(reproductionArray[arr][0], x => x);   
     reproductionArray[arr][3] = Array.from(reproductionArray[arr][1], x => x); 
@@ -127,16 +131,23 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     reproductionArray[arr][2].splice(rangeStartIndex, crossFrom1.length, ...crossFrom1);
     reproductionArray[arr][3].splice(rangeStartIndex, crossFrom1.length, ...crossFrom0);
     
-    console.log(reproductionArray[arr][2]);
-    console.log(reproductionArray[arr][3]);
+    //console.log(reproductionArray[arr][2]);
+    //console.log(reproductionArray[arr][3]);
     
     let set2 = new Set(reproductionArray[arr][2]);
     reproductionArray[arr][2] = [...set2];
     let set3 = new Set(reproductionArray[arr][3]);
     reproductionArray[arr][3] = [...set3];
 
-    console.log(reproductionArray[arr][2]);
-    console.log(reproductionArray[arr][3]);
+    //console.log(reproductionArray[arr][2]);
+    //console.log(reproductionArray[arr][3]);
+    
+    //chance: random mutation
+    reproductionArray[arr].forEach(sack => {
+      if (Math.random() > 0.5) {
+        mutateRandom(sack, objects);
+      }
+    });
     
     //check wheight limit
     let weight = [];
@@ -144,6 +155,9 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     
     //remove excessive weight
     reproductionArray[arr].forEach(sack => enforceWeightLimit(sack, maxWeight, objects));
+    
+    reproductionArray[arr].forEach(sack => weight.push(checkWeight(sack, objects)));
+    //console.log("wgt "+ weight);
     
     //check fitness
     let fitness = [];
@@ -155,9 +169,9 @@ function geneticRangeCrossover(knapsacks, maxWeight, objects) {
     console.log(reproductionArray[arr]);
   }
   
-  console.log(reproductionArray);
+  //console.log(reproductionArray);
   
-  //chance: random mutation
+  
   //put best knapsacks into same length array as original
   //fill array with all 0's so that any fitness is better
   //check fitness and if better, find index math.min value and put better fitness there
@@ -181,10 +195,6 @@ console.log(before);
 let after = geneticRangeCrossover([knapsack1, knapsack2, knapsack3, knapsack4], 35, myObjects);
 console.log(after)
 
-console.log(checkFitness(after[0][0], myObjects));
-console.log(checkFitness(after[0][1], myObjects));
-console.log(checkFitness(after[0][2], myObjects));
-console.log(checkFitness(after[0][3], myObjects));
 
 
 /*
