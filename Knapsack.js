@@ -50,7 +50,7 @@ function createRandomKnapsack(maxWeight, objects) {
   }
   */
   //truly random, no cheating
-  while (knapsackWeight < maxWeight && i <= maxWeight * 3) {
+  while (knapsackWeight < maxWeight && i <= maxWeight) {
     randomPick = randomNumber(objects.weight.length - 2);
     
     if (!arr.includes(randomPick) && objects.weight[randomPick] + knapsackWeight <= maxWeight) {
@@ -267,7 +267,6 @@ no change kick it
 true random init
 try push with mutate
 try move range random inside for loop
-ARE DUPLICATES WEHIGHT AND NTO INDEX?
 */
 
 
