@@ -135,7 +135,13 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
     
     if (gens !== generations) {
       reproductionArray = pairParents(survivalArray[1]);
-      //survivalArray[0] = Array.from({length: survivalArray[0].length}, (v, i) => 0);
+      
+      //Accept the current best ones everytime.
+      //Unlike without, it has memory and only accept better ones.
+      //maxNoChangesBeforeQuit won't work with this on.
+      //results better with few chromosomes (4), but worse with more (16)
+      //because lack of movement/variance with fewer ones. So they need more pressure to change
+      survivalArray[0] = Array.from({length: survivalArray[0].length}, (v, i) => 0);
     }
     
     let rangeStartIndex = randomNumber(reproductionArray[0][0].length -1);
@@ -231,19 +237,19 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
 
     }
     
-  //console.log(maxNoChangesBeforeQuit + " _ " + (generations - gens));
+  console.log(maxNoChangesBeforeQuit + " _ " + (generations - gens));
   if (!change) {
     maxNoChangesBeforeQuit--;
   } else {
     maxNoChangesBeforeQuit = 20; //magic number !
   }  
-  
+
   //console.log(reproductionArray[arr]);
   console.log(survivalArray[0]);
     
   gens--;
   }
-  
+
   return survivalArray; 
 }
 
@@ -265,7 +271,7 @@ console.log(before);
 let after = geneticRangeCrossover(knapsacks, 35, 100, myObjects);
 console.log(after);
 
-//let again = geneticRangeCrossover(after[1], 35, 50, myObjects);
+//let again = geneticRangeCrossover(after[1], 35, 100, myObjects);
 //console.log(again);
 
 
@@ -274,12 +280,9 @@ function genetic (point crossover)
 check randomNumber -2 stuff is working
 random range pick isn't good. it picks from [0][0]. It should pick from the longeste maybe? dunno
 probably the random objects has a lot to do with start fitness and end results not changing much
-
 no change kick it
-!:
-true random init
 try push with mutate
-try move range random inside for loop
+try move range random pick inside for loop
 */
 
 
