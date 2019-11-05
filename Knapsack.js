@@ -118,6 +118,7 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
   let reproductionArray = [];
   let survivalArray = [];
   let gens = generations;
+  let maxNoChangesBeforeQuit = 20;
   survivalArray[0] = Array.from({length: knapsacks.length}, (v, i) => 0);
   survivalArray[1] = Array.from({length: knapsacks.length}, (v, i) => knapsacks[i]);
   
@@ -129,7 +130,7 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
     knapsacks.shift();
   }
   
-  while (gens > 0) {
+  while (gens > 0 && maxNoChangesBeforeQuit >= 0) {
     //loop
     
     if (gens !== generations) {
@@ -146,8 +147,10 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
     //console.log(rangeStartIndex);
     //console.log(rangeEndIndex);
     
+    let change = false;
+    
     for(let arr in reproductionArray) {
-            
+      
       reproductionArray[arr][2] = Array.from(reproductionArray[arr][0], x => x);   
       reproductionArray[arr][3] = Array.from(reproductionArray[arr][1], x => x); 
       let crossFrom0 = reproductionArray[arr][0].slice(rangeStartIndex, rangeEndIndex + 1);
@@ -199,12 +202,13 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
       reproductionArray[arr].forEach(sack => {
         let sackFitness = checkFitness(sack, objects);
         let leastFitIndex = survivalArray[0].findIndex(item => item == Math.min(...survivalArray[0]));
-        if (survivalArray[0][leastFitIndex] <= sackFitness) {
+        if (survivalArray[0][leastFitIndex] < sackFitness) {
           survivalArray[0][leastFitIndex] = sackFitness;
           survivalArray[1][leastFitIndex] = [...sack];
+          change = true;
         }
       });
-
+      
       //kick duplicates | might not need this if there is the no change after x tries kick
       /*
       console.log(survivalArray[0]);
@@ -224,10 +228,19 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
         }
       });
       */
-      
-      //console.log(reproductionArray[arr]);
-      console.log(survivalArray[0]);
+
     }
+    
+  //console.log(maxNoChangesBeforeQuit + " _ " + (generations - gens));
+  if (!change) {
+    maxNoChangesBeforeQuit--;
+  } else {
+    maxNoChangesBeforeQuit = 20; //magic number !
+  }  
+  
+  //console.log(reproductionArray[arr]);
+  console.log(survivalArray[0]);
+    
   gens--;
   }
   
@@ -249,7 +262,7 @@ console.log(myObjects);
 let before = knapsacks;
 console.log(before);
 
-let after = geneticRangeCrossover(knapsacks, 35, 50, myObjects);
+let after = geneticRangeCrossover(knapsacks, 35, 100, myObjects);
 console.log(after);
 
 //let again = geneticRangeCrossover(after[1], 35, 50, myObjects);
