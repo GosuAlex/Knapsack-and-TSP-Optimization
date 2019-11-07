@@ -14,7 +14,7 @@ function createRandomObjects(numberOfObjects, maxValue, maxWeight) {
 }
 
 function createRandomKnapsack(maxWeight, objects) {
-  let arr = [];
+  let arr = Array.from({length: objects.weight.length}, (v, i) => 0);;
   let i = 0;
   let knapsackWeight = 0;
   
@@ -45,14 +45,12 @@ function createRandomKnapsack(maxWeight, objects) {
   */
   //truly random, no cheating
   while (knapsackWeight < maxWeight && i <= maxWeight) {
-    randomPick = randomNumber(objects.weight.length - 2);
-    
-    if (!arr.includes(randomPick) && objects.weight[randomPick] + knapsackWeight <= maxWeight) {
-      arr.push(randomPick);
-      knapsackWeight += objects.weight[randomPick];
-    }
+    randomPick = randomNumber(arr.length - 2);
+    arr[randomPick] = 1;
+    knapsackWeight += objects.weight[randomPick];
     i++;
   }
+  enforceWeightLimit(arr, maxWeight, objects);
   
   return arr;
 } 
@@ -60,7 +58,11 @@ function createRandomKnapsack(maxWeight, objects) {
 function checkFitness(knapsack, objects) {
   let fitness = 0;
   
-  knapsack.forEach(item => fitness += objects.value[item]);
+  knapsack.forEach((item, index) => {
+    if (item == 1) {
+      fitness += objects.value[index];
+    }
+  });
   
   return fitness;
 }
@@ -68,29 +70,40 @@ function checkFitness(knapsack, objects) {
 function checkWeight(knapsack, objects) {
   let weight = 0;
   
-  knapsack.forEach(item => weight += objects.weight[item]);
+  knapsack.forEach((item, index) => {
+    if (item == 1) {
+      weight += objects.weight[index];
+    }
+  });
 
   return weight;
 }
 
 function enforceWeightLimit(knapsack, maxWeight, objects) {
   let weight = checkWeight(knapsack, objects);
+  let containsIndex = [];
   
-  //knapsack.forEach(item => weight += objects.weight[item]);
-  
+  knapsack.forEach((item, index) => {
+    if (item == 1) {
+      containsIndex.push(index);
+    }
+  });
+
   while(weight > maxWeight) {
-    let randomRemove = randomNumber(knapsack.length - 2);
-    weight -= objects.weight[knapsack[randomRemove]];
-    knapsack.splice(randomRemove, 1);
+    let randomRemove = randomNumber(containsIndex.length - 2);
+    weight -= objects.weight[containsIndex[randomRemove]];
+    knapsack[containsIndex[randomRemove]] = 0;
   }
 }
 
 function mutateRandom(knapsack, objects) {
-  let randomPick = randomNumber(objects.weight.length - 2);
+  let randomPick = randomNumber(knapsack.length - 2);
 
-  //only tries once, if no success there is no mutation.
-  if (!knapsack.includes(randomPick)) {
-    knapsack[randomNumber(knapsack.length - 2)] = randomPick; 
+  if (knapsack[randomPick] == 1) {
+    knapsack[randomPick] = 0; 
+  }
+  else {
+    knapsack[randomPick] = 1;
   }
 }
 
@@ -138,8 +151,8 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
       survivalArray[0] = Array.from({length: survivalArray[0].length}, (v, i) => 0);
     }
     
-    let rangeStartIndex = randomNumber(reproductionArray[0][0].length -1);
-    let rangeEndIndex = randomNumber(reproductionArray[0][0].length -1);
+    let rangeStartIndex = randomNumber(reproductionArray[0][0].length -2);
+    let rangeEndIndex = randomNumber(reproductionArray[0][0].length -2);
     if (rangeStartIndex > rangeEndIndex) {
       [rangeStartIndex, rangeEndIndex] = [rangeEndIndex, rangeStartIndex];
     }
@@ -156,18 +169,18 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
       let crossFrom0 = reproductionArray[arr][0].slice(rangeStartIndex, rangeEndIndex + 1);
       let crossFrom1 = reproductionArray[arr][1].slice(rangeStartIndex, rangeEndIndex + 1);
       //reproductionArray[arr][2].splice(rangeStartIndex, crossFrom1.length, ...crossFrom1);
-      //reproductionArray[arr][3].splice(rangeStartIndex, crossFrom1.length, ...crossFrom0);
+      //reproductionArray[arr][3].splice(rangeStartIndex, crossFrom0.length, ...crossFrom0);
       //this might also be cheating or... dunno. reproduction method is free choice.
-      reproductionArray[arr][2].splice(rangeStartIndex, 0, ...crossFrom1);
-      reproductionArray[arr][3].splice(rangeStartIndex, 0, ...crossFrom0);
+      reproductionArray[arr][2].splice(rangeStartIndex, crossFrom1.length, ...crossFrom1);
+      reproductionArray[arr][3].splice(rangeStartIndex, crossFrom0.length, ...crossFrom0);
       
-      //console.log(reproductionArray[arr][2]);
+      //console.log(checkFitness(reproductionArray[arr][0], objects));
       //console.log(reproductionArray[arr][3]);
       
-      let set2 = new Set(reproductionArray[arr][2]);
-      reproductionArray[arr][2] = [...set2];
-      let set3 = new Set(reproductionArray[arr][3]);
-      reproductionArray[arr][3] = [...set3];
+      //let set2 = new Set(reproductionArray[arr][2]);
+      //reproductionArray[arr][2] = [...set2];
+      //let set3 = new Set(reproductionArray[arr][3]);
+      //reproductionArray[arr][3] = [...set3];
 
       //console.log(reproductionArray[arr][2]);
       //console.log(reproductionArray[arr][3]);
@@ -180,10 +193,10 @@ function geneticRangeCrossover(knapsacks, maxWeight, generations, objects) {
           }
         }
       });
-            
+
       //remove excessive weight
       reproductionArray[arr].forEach(sack => enforceWeightLimit(sack, maxWeight, objects));
-      
+
       //check wheight limit
       /*
       let weight = [];
@@ -273,8 +286,11 @@ console.log(before);
 let after = geneticRangeCrossover(knapsacks, 35, 100, myObjects);
 console.log(after);
 
-//let again = geneticRangeCrossover(after[1], 35, 100, myObjects);
-//console.log(again);
+console.log(checkWeight(after[1][0], myObjects));
+console.log(checkWeight(after[1][1], myObjects));
+console.log(checkWeight(after[1][2], myObjects));
+console.log(checkWeight(after[1][3], myObjects));
+
 
 
 /*
@@ -290,6 +306,5 @@ put testing into it. JS testing.
 put best knapsacks in array, so there is memory and return those instead of the current iteration
 fix pariring so there is a function call instead of doing it two ways. knapsack, past reproduction
 make maxNoChangesBeforeQuit work with accept current iteration and not only best ones.
-let rangeStartIndex = randomNumber(reproductionArray[0][0].length -2); ??? should be 1?
 
 */
