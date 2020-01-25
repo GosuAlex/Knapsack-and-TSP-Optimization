@@ -286,6 +286,8 @@ return only the very best knapsack.
 use reduce on check weight and fitness
 remove sumRangeInArray
 put testing into it. JS testing.
+put rapport på github
+add Memoization 
 
 put best knapsacks in array, so there is memory and return those instead of the current iteration
 fix pariring so there is a function call instead of doing it two ways. knapsack, past reproduction
